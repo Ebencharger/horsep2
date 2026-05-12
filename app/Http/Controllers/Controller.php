@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\USERTYPE;
 use App\Events\GetUser;
 use App\Mail\message;
+use App\Models\Log;
 use App\Models\Loginattempt;
 use App\Models\Loginsession;
 use App\Models\Otp;
@@ -137,6 +138,11 @@ abstract class Controller
         User::where('userId', $user->userId)->update([
             'status' => 'Online',
             'lastActive' => now()
+        ]);
+        Log::create([
+            'userId' => $user->userId,
+            'type' => 'Login',
+            'created_at' => now(),
         ]);
     }
 

@@ -214,11 +214,6 @@ paths:
                 role:
                   type: string
                   example: "Super Admin"
-                permissionIds:
-                  type: array
-                  items:
-                    type: string
-                    example: ["1882", "6899"]
       responses:
         200:
           $ref: "#/components/responses/Success"
@@ -247,11 +242,6 @@ paths:
                 role:
                   type: string
                   example: "Super Admin"
-                permissionIds:
-                  type: array
-                  items:
-                    type: string
-                    example: ["1882", "6899"]
       responses:
         200:
           $ref: "#/components/responses/Success"

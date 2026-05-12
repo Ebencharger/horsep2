@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
+use function Ramsey\Uuid\v4;
+
 class User extends Controller
 {
     public function createUser(Request $request)
@@ -35,7 +37,7 @@ class User extends Controller
         }
        $role=
         ModelsUser::create([
-            'role' => $request->role,
+            'roleId' => $request->roleId,
             'email' => $request->email,
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
