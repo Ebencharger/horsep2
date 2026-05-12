@@ -1,0 +1,562 @@
+openapi: 3.0.3
+info:
+  title: Horsep2
+  description: This is an ERP system designed for Hospital and Clinic by Ebencharger
+  version: 1.0.0
+  contact:
+    email: ajayioluwaseunebenezer@gmail.com
+    name: Ebencharger
+servers:
+  - url: http://127.0.0.1:8000/api
+paths:
+  /user/create:
+    post:
+      summary: Create a user
+      operationId: createUser
+      tags:
+        - User
+      description: To onboard User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                  example: Oluwaseun Ebenezer
+                  required:
+                    - "true"
+                lastName:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  example: Ajayi
+                  required:
+                    - "true"
+                userName:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  example: Ebencharger
+                country:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  example: Nigeria
+                  readOnly: true
+                state:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  example: Oyo
+                  required:
+                    - "false"
+                phoneNumber:
+                  type: string
+                  minLength: 11
+                  maxLength: 11
+                  example: 08167302289
+                  required:
+                    - "false"
+                town:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  example: Ibadan
+                  required:
+                    - "false"
+                email:
+                  type: string
+                  format: email
+                  example: john.doe@yahoo.com
+                  required:
+                    - "true"
+                roleId:
+                  type: string
+                  example: "2345djd9djd"
+                  required:
+                    - "true"
+                role:
+                  type: string
+                  example: Super Admin
+                  enum:
+                    - Super Admin
+                    - Customer
+                    - Front-Desk
+                    - Lab
+                    - Pharm
+                    - Nurse
+                  readOnly: true
+                password:
+                  type: string
+                  example: QuertyUIOP123
+                  required:
+                    - "true"
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        500:
+          $ref: "#/components/responses/BadRequest"
+    patch:
+      summary: Edit a user
+      operationId: updateUser
+      description: Update a user's Info
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  minLength: 3
+                  maxLength: 50
+                  example: John Doe
+                  required:
+                    - "true"
+                lastName:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  example: john.doe
+                  required:
+                    - "true"
+                userName:
+                  type: string
+                  minLength: 3
+                  maxLength: 15
+                  example: john.doe
+      responses:
+        200:
+          description: User profile updated successfully
+        500:
+          description: User profile not updated successfully
+    get:
+      description: To get a user or all users
+      summary: To get a user or all users
+      operationId: getUser
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/UserIdParam"
+        - $ref: "#/components/parameters/RoleParam"
+
+      responses:
+        200:
+          description: User response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalRecords:
+                    type: number
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                      $ref: "#/components/schemas/User"
+        500:
+          description: Can not get a user detail
+    delete:
+      description: User Deletes account
+      summary: User Deletes account, such that he or she does not need an account on the system again
+      operationId: deleteUser
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  example: I don't need an account on this platform again
+      responses:
+        200:
+          description: User deleted successfully
+        500:
+          description: User can not be deleted successfully
+
+  /role:
+    post:
+      summary: Create a role
+      operationId: createRole
+      description: To create a role
+      tags:
+        - Role
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  example: "Super Admin"
+                permissionIds:
+                  type: array
+                  items:
+                    type: string
+                    example: ["1882", "6899"]
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        404:
+          $ref: "#/components/responses/NotFound"
+        417:
+          $ref: "#/components/responses/NotAuthorized"
+        500:
+          $ref: "#/components/responses/BadRequest"
+    patch:
+      summary: edit a role
+      operationId: editRole
+      description: To edit a role
+      tags:
+        - Role
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleId:
+                  type: string
+                role:
+                  type: string
+                  example: "Super Admin"
+                permissionIds:
+                  type: array
+                  items:
+                    type: string
+                    example: ["1882", "6899"]
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        404:
+          $ref: "#/components/responses/NotFound"
+        417:
+          $ref: "#/components/responses/NotAuthorized"
+        500:
+          $ref: "#/components/responses/BadRequest"
+    get:
+      summary: get a role
+      operationId: getSingleRole
+      description: To get a role
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/RoleIdParam"
+      tags:
+        - Role
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        404:
+          $ref: "#/components/responses/NotFound"
+        417:
+          $ref: "#/components/responses/NotAuthorized"
+        500:
+          $ref: "#/components/responses/BadRequest"
+    delete:
+      summary: delete a role
+      operationId: deleteRole
+      description: To delete a role
+      tags:
+        - Role
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                roleId:
+                  type: string
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        404:
+          $ref: "#/components/responses/NotFound"
+        417:
+          $ref: "#/components/responses/NotAuthorized"
+        500:
+          $ref: "#/components/responses/BadRequest"
+  /permission:
+    post:
+      summary: Create a permission
+      operationId: createPermission
+      description: To create a permission
+      tags:
+        - Permission
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                permission:
+                  type: string
+                  example: "Create User"
+                description:
+                  type: string
+                  example: "You have access to create user"
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        404:
+          $ref: "#/components/responses/NotFound"
+        417:
+          $ref: "#/components/responses/NotAuthorized"
+        500:
+          $ref: "#/components/responses/BadRequest"
+    patch:
+      summary: edit a permission
+      operationId: editPermission
+      description: To edit a permission
+      tags:
+        - Permission
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                permissionId:
+                  type: string
+                permission:
+                  type: string
+                  example: "Create User"
+                description:
+                  type: string
+                  example: "You have access to create user"
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        404:
+          $ref: "#/components/responses/NotFound"
+        417:
+          $ref: "#/components/responses/NotAuthorized"
+        500:
+          $ref: "#/components/responses/BadRequest"
+    get:
+      summary: get permissions or single permission
+      operationId: getPermission
+      description: To get permissions or single permission
+      parameters:
+        - $ref: "#/components/parameters/SkipParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/PermissionParam"
+      tags:
+        - Permission
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        404:
+          $ref: "#/components/responses/NotFound"
+        417:
+          $ref: "#/components/responses/NotAuthorized"
+        500:
+          $ref: "#/components/responses/BadRequest"
+    delete:
+      summary: delete a permission
+      operationId: deletePermission
+      description: To delete a permission
+      tags:
+        - Permission
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                permissionId:
+                  type: string
+      responses:
+        200:
+          $ref: "#/components/responses/Success"
+        404:
+          $ref: "#/components/responses/NotFound"
+        417:
+          $ref: "#/components/responses/NotAuthorized"
+        500:
+          $ref: "#/components/responses/BadRequest"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    SkipParam:
+      name: skip
+      in: query
+      required: true
+      schema:
+        type: integer
+
+    LimitParam:
+      name: limit
+      in: query
+      required: true
+      schema:
+        type: integer
+    UserIdParam:
+      name: userId
+      in: query
+      required: true
+      schema:
+        type: string
+    RoleIdParam:
+      name: roleId
+      in: query
+      required: true
+      schema:
+        type: string
+    RoleParam:
+      name: role
+      in: query
+      required: true
+      schema:
+        type: string
+    PermissionParam:
+      name: role
+      in: query
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        userName:
+          type: string
+        phoneNumber:
+          type: string
+        role:
+          type: string
+        email:
+          type: string
+        profilePicture:
+          type: string
+      example:
+        firstName: Ajayi
+        lastName: Ebenezer
+        userName: Ebencharger
+        phone_number: 08167302289
+        email: ajayioluwaseunebenezer@gmail.com
+        role:
+          [
+            { "roleId": 16722hshsh, "role": "Driver" },
+            { "roleId": 16722hshshs, "role": "Admin" },
+            { "roleId": 1672s2hshsh, "role": "Vendor" },
+          ]
+        profilePicture: profileImage/1089.jpg
+
+    SucessDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          example: "Successful"
+        status:
+          type: number
+          example: 200
+    ProblemDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+        status:
+          type: number
+
+  responses:
+    Success:
+      description: Sucess
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/SucessDetail"
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    NotAuthenticated:
+      description: Access token is missing/invalid
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    NotAuthorized:
+      description: Access token can't access resource
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    Conflict:
+      description: The specified resource has a conflict
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    Gone:
+      description: The specified resource is gone
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
+    RateLimited:
+      description: The specified resource is rate limited
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetail"
